@@ -1,5 +1,6 @@
-SRC = src/main.cpp src/generator.cpp src/solver.cpp
+SRC := $(wildcard src/*.cpp)
+INCLUDES := $(shell pkg-config --cflags --libs raylib)
 TARGET = maze-solver
 
 run: $(SRC)
-	g++ $(SRC) `pkg-config --cflags --libs raylib` -o $(TARGET)
+	g++ $(SRC) $(INCLUDES) -o $(TARGET) -std=c++11
