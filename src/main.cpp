@@ -33,12 +33,22 @@ int main(int argc, char **argv)
 		{
 			endPointsDropped[0] = true;
 			get_endpoint(mousePos, endPoints[0], endPointsPos[0]);
+			if (endPointsPos[0].y >= h - 1)
+			{
+				endPointsPos[0].y--;
+				endPoints[0].y -= blockSize;
+			}
 		}
 
 		else if (IsMouseButtonPressed(1))
 		{
 			endPointsDropped[1] = true;
 			get_endpoint(mousePos, endPoints[1], endPointsPos[1]);
+			if (endPointsPos[1].y >= h - 1)
+			{
+				endPointsPos[1].y--;
+				endPoints[1].y -= blockSize;
+			}
 		}
 
 		BeginDrawing();
