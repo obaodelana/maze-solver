@@ -2,16 +2,21 @@
 #include <unordered_set>
 #include <cstddef>
 #include <vector>
+#include "raylib.h"
+#include <ostream>
 
 struct Pos
 {
 	int x, y;
+	Pos() : x(0), y(0) {}
 	Pos(int x, int y): x(x), y(y) {}
 
 	bool operator==(const Pos& other) const
 	{
 		return x == other.x && y == other.y;
 	}
+
+	friend std::ostream& operator<<(std::ostream&, const Pos&);
 };
 
 namespace std

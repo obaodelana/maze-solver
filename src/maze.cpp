@@ -25,6 +25,12 @@ Maze::Maze(size_t col, size_t row) : col(col), row(row)
 	}
 }
 
+std::ostream& operator<<(std::ostream& out, const Pos& pos)
+{
+	out << pos.x << ", " << pos.y;
+	return out;
+}
+
 bool Maze::validEdge(const Pos& edge) const
 {
 	return edge.x >= 0 && edge.x <= col
