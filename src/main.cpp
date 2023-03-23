@@ -4,8 +4,14 @@
 #include "maze.hpp"
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <algorithm>
+#include <sstream>
+
+#define OFFWHITE (Color) {247, 240, 240, 255}
 
 void get_endpoint(const Vector2&, Vector2&, Pos&);
+void display_options(const std::string&, int, int);
 
 constexpr int blockSize = 25;
 
@@ -14,7 +20,10 @@ int main(int argc, char **argv)
 	const int w = (argc > 1) ? std::atoi(argv[1]) : 40;
 	const int h = (argc > 2) ? std::atoi(argv[2]) : 30;
 
-	InitWindow(w * blockSize, h * blockSize, "Maze Solver");
+	const int width = w * blockSize;
+	const int height = h * blockSize;
+
+	InitWindow(width, height, "Maze Solver");
 	SetTargetFPS(60);
 
 	generate_maze(w, h - 1);
@@ -22,8 +31,6 @@ int main(int argc, char **argv)
 	bool endPointsDropped[2] {false, false};
 	Vector2 endPoints[2] {};
 	Pos endPointsPos[2] {};
-
-	// TODO: Display search algorithm options at the bottom of the screen
 
 	while(!WindowShouldClose())
 	{
@@ -58,11 +65,15 @@ int main(int argc, char **argv)
 			draw_maze(w, h - 1, blockSize);
 
 			if (!endPointsDropped[0] || !endPointsDropped[1])
-				DrawCircle(mousePos.x - 0.1f, mousePos.y + 0.1f, blockSize / 2, (Color) {247, 240, 240, 255});
+				DrawCircle(mousePos.x - 0.1f, mousePos.y + 0.1f, blockSize / 3, OFFWHITE);
 			if (endPointsDropped[0])
 				DrawCircleV(endPoints[0], blockSize / 3, GREEN);
 			if (endPointsDropped[1])
 				DrawCircleV(endPoints[1], blockSize / 3, GOLD);
+
+			if (endPointsDropped[0] && endPointsDropped[1])
+				display_options("Depth-First Search;Breadth-First Search;Dijkstra's Algorithm",
+					width / (3 + 1), height - 20);
 
 		EndDrawing();
 	}
@@ -81,4 +92,19 @@ void get_endpoint(const Vector2& mousePos, Vector2& endpoint, Pos& endpointPos)
 	
 	endpoint.x += (blockSize / 2);
 	endpoint.y += (blockSize / 2);
+}
+
+void display_options(const std::string& options, int w, int h)
+{
+	int i = 1;
+	std::istringstream iss {options};
+	std::string option {};
+	while (std::getline(iss, option, ';'))
+	{
+		option = std::to_string(i++) + " " + option;
+
+		DrawRectangleLines(w - 3, h - 1, 12, 15, GRAY);
+		DrawText(option.c_str(), w, h, 15, OFFWHITE);
+		w += MeasureText(option.c_str(), 15) + 15;
+	}
 }
