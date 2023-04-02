@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	const Maze maze = generate_maze(w, h - 1);
 	
 	int alg = -1;
-	float time = 0, stepTime = 1;
+	float time = 0, stepTime = 0.5;
 
 	bool endPointsDropped[2] {false, false};
 	Vector2 endPoints[2] {};
@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 				if (IsMouseButtonPressed(i))
 				{
 					endPointsDropped[i] = true;
+					clear_boxes();
 					get_endpoint(mousePos, endPoints[i], endPointsPos[i]);
 				}
 			}
@@ -66,16 +67,28 @@ int main(int argc, char **argv)
 	
 		else
 		{
+			if (IsKeyPressed(KEY_UP))
+			{
+				if (stepTime >= 0.1f)
+					stepTime += 0.1f;
+				else
+					stepTime = 0.1f;
+			}
+			else if (IsKeyPressed(KEY_DOWN))
+			{
+				if (stepTime > 0.1f)
+					stepTime -= 0.1f;
+				else
+					stepTime = 0.07f;
+			}
+
 			time += GetFrameTime();
 			if (time >= stepTime)
 			{
 				time = 0;
 				bool done = find_path(maze, endPointsPos[0], endPointsPos[1], alg);
 				if (done)
-				{
 					alg = -1;
-					endPointsDropped[0] = false, endPointsDropped[1] = false;
-				}
 			} 
 		}	
 
@@ -84,11 +97,6 @@ int main(int argc, char **argv)
 			ClearBackground(BLACK);
 
 			draw_maze(w, h - 1, blockSize);
-
-			if (endPointsDropped[0])
-				DrawCircleV(endPoints[0], blockSize / 3, GREEN);
-			if (endPointsDropped[1])
-				DrawCircleV(endPoints[1], blockSize / 3, GOLD);
 
 			if (alg == -1)
 			{
@@ -104,8 +112,16 @@ int main(int argc, char **argv)
 
 			else
 			{
-				draw_box(blockSize / 1.5);
+				DrawText("Visited: Mint.  Unvisited: Grey.", 5, height - 20, 15, RAYWHITE);
+				DrawText(TextFormat("Step Time: %.1fs", stepTime), width - 110, height - 20, 15, RAYWHITE);
 			}
+
+			draw_box(blockSize);
+
+			if (endPointsDropped[0])
+				DrawCircleV(endPoints[0], blockSize / 3, GREEN);
+			if (endPointsDropped[1])
+				DrawCircleV(endPoints[1], blockSize / 3, GOLD);
 
 		EndDrawing();
 	}
@@ -140,10 +156,9 @@ void display_options(const std::string& options, int w, int h)
 	std::string option {};
 	while (std::getline(iss, option, ';'))
 	{
-		option = std::to_string(i++) + " " + option;
-
+		const char *text = TextFormat("%d %s", i++, option.c_str());
 		DrawRectangleLines(w - 3, h - 1, 12, 15, GRAY);
-		DrawText(option.c_str(), w, h, 15, RAYWHITE);
-		w += MeasureText(option.c_str(), 15) + 15;
+		DrawText(text, w, h, 15, RAYWHITE);
+		w += MeasureText(text, 15) + 15;
 	}
 }

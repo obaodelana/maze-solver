@@ -5,7 +5,9 @@
 #include <list>
 #include <iostream>
 
-bool dfs(const Maze&, Pos,
+extern int width, height;
+
+bool dfs_bfs(bool dfs, const Maze&, Pos,
 	std::unordered_set<Pos>&, std::list<Pos>&,
 	std::unordered_map<Pos, Pos>&);
 
@@ -20,7 +22,7 @@ void show_path(const Maze&, Pos, Pos,
 	This allows the search to be non-blocking
 */
 
-bool searching = false;
+bool searching = false, path404 = false;
 std::unordered_map<Pos, Color> boxes {};
 
 enum Algorithm : int { DFS = 0, BFS, DIJKSTRA };
@@ -34,6 +36,7 @@ bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 	if (!searching)
 	{
 		searching = true;
+		path404 = false;
 		boxes.clear();
 
 		container.push_back(start);
@@ -42,12 +45,12 @@ bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 
 	switch (alg)
 	{
-		case DFS:
-			searching = dfs(maze, end, visited, container, searchTree);
+		case DFS: case BFS:
+			searching = dfs_bfs(alg == DFS, maze, end, visited, container, searchTree);
 			break;
 		
 		deault:
-			std::cout << "solver.cpp: error: Unkown algorithm\n";
+			std::cerr << "solver.cpp: error: Unkown algorithm\n";
 			searching = false;
 			return false;
 	}
@@ -66,43 +69,42 @@ bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 	return !searching;
 }
 
-bool dfs(const Maze& maze, Pos goal,
-	std::unordered_set<Pos>& visited, std::list<Pos>& stack,
+bool dfs_bfs(bool dfs, const Maze& maze, Pos goal,
+	std::unordered_set<Pos>& visited, std::list<Pos>& container,
 	std::unordered_map<Pos, Pos>& searchTree)
 {
-	if (stack.empty())
+	if (container.empty())
 		return false;
 
-	Pos curr = stack.front();
-	stack.pop_front();
+	Pos curr = container.front();
+	container.pop_front();
 
 	// We've found the goal
 	if (curr == goal)
 		return false;
 
 	if (visited.find(curr) != visited.end())
-	{
-		boxes[curr] = LIME;
-		return true;
-	}
-	
+		return dfs_bfs(dfs, maze, goal, visited, container, searchTree);
 	else
 		visited.insert(curr);
 
-	// Light green
-	boxes[curr] = (Color) {225, 255, 147, 255};
+	// Mint
+	boxes[curr] = (Color) {99, 163, 117, 255};
 	// Go through neighbours that are not walls
 	for (Pos next : maze.paths(curr))
 	{
 		// If you haven't been visited
 		if (visited.find(next) == visited.end())
 		{
-			stack.push_front(next);
+			if (dfs)
+				container.push_front(next);
+			else
+				container.push_back(next);
+
 			searchTree[next] = curr;
 
 			boxes[next] = LIGHTGRAY;
 		}
-		std::cout << '\n';
 	}
 	
 	return true;
@@ -114,48 +116,32 @@ void draw_box(int boxSize)
 	{
 		DrawRectangle(box.first.x * boxSize, box.first.y * boxSize, boxSize, boxSize, box.second);
 	}
+
+	if (path404)
+		DrawText("Path Not Found!", width / 2 - 99, height / 2, 25, RED);
+}
+
+void clear_boxes()
+{
+	boxes.clear();
+	path404 = false;
 }
 
 void show_path(const Maze& maze, Pos start, Pos end, const std::unordered_map<Pos, Pos>& searchTree)
 {
-	// If [end] is not reachable from [start]
-	// Look for closest neighbour to [end]
-	int r = 0;
-	while (searchTree.find(end) == searchTree.end())
+	if (searchTree.find(end) == searchTree.end())
 	{
-		// Create bounding box around [end]
-		Pos nearby[] =
-		{
-			{end.x - r - 1, end.y + r + 1},
-			{end.x + r, end.y + r + 1},
-			{end.x + r + 1, end.y + r + 1},
-			{end.x - r - 1, end.y + r},
-			{end.x + r + 1, end.y + r},
-			{end.x - r - 1, end.y - r - 1},
-			{end.x + r, end.y - r - 1},
-			{end.x + r + 1, end.y - r - 1}
-		};
-
-		for (Pos n : nearby)
-		{
-			if (maze.is_vertex(n))
-			{
-				if (searchTree.find(n) != searchTree.end())
-				{
-					end = n;
-					break;
-				}
-			}
-		}
-
-		r++;
+		path404 = true;
+		return;
 	}
-	
+
 	Pos move = end;
 	while (move != start)
 	{
-		boxes[move] = GREEN;
+		// Light green
+		boxes[move] = (Color) {122, 229, 130, 255};
 		move = searchTree.at(move);
 	}
-	boxes[start] = GREEN;
+	boxes[start] = (Color) {122, 229, 130, 255};
+
 }

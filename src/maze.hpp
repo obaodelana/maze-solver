@@ -65,8 +65,8 @@ public:
 	bool is_vertex(const Pos&) const;
 	bool is_wall(const Pos&, const Pos&) const; 
 
-	size_t maze_width() const { return col; }
-	size_t maze_height() const { return row; }
+	size_t width() const { return col; }
+	size_t height() const { return row; }
 	size_t num_of_neighbours(const Pos& vertex) const;
 };
 

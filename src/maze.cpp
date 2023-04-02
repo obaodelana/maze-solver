@@ -75,9 +75,10 @@ std::vector<Pos> Maze::paths(const Pos& vertex) const
 
 	Pos vertexRight = {vertex.x + 1, vertex.y},
 		vertexDown = {vertex.x, vertex.y + 1};
+	Pos oppVertex = {vertex.x + 1, vertex.y + 1};
 
 	if (!is_vertex(vertex) || !is_vertex(vertexRight)
-		|| !is_vertex(vertexDown))
+		|| !is_vertex(vertexDown) || !is_vertex(oppVertex))
 		return openPaths;
 
 	if (!is_wall(vertex, vertexRight))
@@ -87,6 +88,12 @@ std::vector<Pos> Maze::paths(const Pos& vertex) const
 			openPaths.push_back(vertexUp);
 	}
 
+	if (!is_wall(oppVertex, vertexDown))
+	{
+		if (is_vertex(vertexDown))
+			openPaths.push_back(vertexDown);
+	}
+
 	if (!is_wall(vertex, vertexDown))
 	{
 		Pos vertexLeft = {vertex.x - 1, vertex.y};
@@ -94,22 +101,16 @@ std::vector<Pos> Maze::paths(const Pos& vertex) const
 			openPaths.push_back(vertexLeft);
 	}
 
-	Pos oppVertex = {vertex.x + 1, vertex.y + 1};
 	if (!is_wall(oppVertex, vertexRight))
 	{
 		if (is_vertex(vertexRight))
 			openPaths.push_back(vertexRight);
 	}
 
-	if (!is_wall(oppVertex, vertexDown))
-	{
-		if (is_vertex(vertexDown))
-			openPaths.push_back(vertexDown);
-	}
-
+	// We don't want extreme-end paths
 	openPaths.erase(std::remove_if(
 		openPaths.begin(), openPaths.end(),
-		[this](Pos p){ return p.x >= this->maze_width() || p.y >= this->maze_height(); }
+		[this](Pos p){ return p.x >= this->width() || p.y >= this->height(); }
 	), openPaths.end());
 
 	return openPaths;
