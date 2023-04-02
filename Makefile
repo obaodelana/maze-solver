@@ -1,6 +1,15 @@
-SRC := $(wildcard src/*.cpp)
-INCLUDES := $(shell pkg-config --cflags --libs raylib)
-TARGET = maze-solver
+OBJS := $(patsubst src/%.cpp, out/%.o, $(wildcard src/*.cpp))
+TARGET = out/maze-solver
 
-run: $(SRC)
-	g++ $(SRC) $(INCLUDES) -o $(TARGET) -std=c++11
+# $< is the first prequisite
+# $@ is the target name
+# Compile
+out/%.o: src/%.cpp
+	g++ -c $< $(shell pkg-config --cflags raylib) -o $@ -std=c++11
+
+# Link
+build: $(OBJS)
+	g++ $^ $(shell pkg-config --libs raylib) -o $(TARGET) 
+
+clean:
+	@$(RM) out/*
