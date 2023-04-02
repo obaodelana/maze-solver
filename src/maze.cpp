@@ -1,6 +1,7 @@
 #include "maze.hpp"
 #include <cassert>
 #include <algorithm>
+#include <iostream>
 
 Maze::Maze(size_t col, size_t row) : col(col), row(row)
 {	
@@ -18,7 +19,7 @@ Maze::Maze(size_t col, size_t row) : col(col), row(row)
 
 			for (Pos e : edges)
 			{
-				if (validEdge(e))
+				if (is_valid_vertex(e))
 					maze[{j, i}].insert(e);
 			}
 		}
@@ -31,10 +32,10 @@ std::ostream& operator<<(std::ostream& out, const Pos& pos)
 	return out;
 }
 
-bool Maze::validEdge(const Pos& edge) const
+bool Maze::is_valid_vertex(const Pos& vertex) const
 {
-	return edge.x >= 0 && edge.x <= col
-		&& edge.y >= 0 && edge.y <= row;
+	return vertex.x >= 0 && vertex.x <= col
+		&& vertex.y >= 0 && vertex.y <= row;
 }
 
 bool Maze::is_vertex(const Pos& vertex) const
@@ -70,19 +71,46 @@ std::vector<Pos> Maze::walls(const Pos& vertex) const
 
 std::vector<Pos> Maze::paths(const Pos& vertex) const
 {
-	std::vector<Pos> openPaths {
-		{vertex.x, vertex.y - 1},
-		{vertex.x, vertex.y + 1},
-		{vertex.x - 1, vertex.y},
-		{vertex.x + 1, vertex.y}
-	};
+	std::vector<Pos> openPaths {};
 
-	openPaths.erase
-	(
-		std::remove_if(openPaths.begin(), openPaths.end(), [this, vertex](const Pos& pos)
-			{ return !this->validEdge(pos) || is_wall(vertex, pos); }),
-		openPaths.end()
-	);
+	Pos vertexRight = {vertex.x + 1, vertex.y},
+		vertexDown = {vertex.x, vertex.y + 1};
+
+	if (!is_vertex(vertex) || !is_vertex(vertexRight)
+		|| !is_vertex(vertexDown))
+		return openPaths;
+
+	if (!is_wall(vertex, vertexRight))
+	{
+		Pos vertexUp = {vertex.x, vertex.y - 1};
+		if (is_vertex(vertexUp))
+			openPaths.push_back(vertexUp);
+	}
+
+	if (!is_wall(vertex, vertexDown))
+	{
+		Pos vertexLeft = {vertex.x - 1, vertex.y};
+		if (is_vertex(vertexLeft))
+			openPaths.push_back(vertexLeft);
+	}
+
+	Pos oppVertex = {vertex.x + 1, vertex.y + 1};
+	if (!is_wall(oppVertex, vertexRight))
+	{
+		if (is_vertex(vertexRight))
+			openPaths.push_back(vertexRight);
+	}
+
+	if (!is_wall(oppVertex, vertexDown))
+	{
+		if (is_vertex(vertexDown))
+			openPaths.push_back(vertexDown);
+	}
+
+	openPaths.erase(std::remove_if(
+		openPaths.begin(), openPaths.end(),
+		[this](Pos p){ return p.x >= this->maze_width() || p.y >= this->maze_height(); }
+	), openPaths.end());
 
 	return openPaths;
 }

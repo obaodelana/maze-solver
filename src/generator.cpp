@@ -8,10 +8,10 @@
 Maze *maze = nullptr;
 
 // Generate a maze with randomized DFS
-void generate_maze(int w, int h)
+const Maze& generate_maze(int w, int h)
 {
 	if (maze != nullptr)
-		return;
+		return *maze;
 
 	std::srand(std::time(NULL));
 
@@ -37,7 +37,7 @@ void generate_maze(int w, int h)
 			[explored, w, h](Pos p) { return (explored.find(p) == explored.end()); });
 
 		// If they are walls that have not been visited	
-		if (unvisited.size() > 0)
+		if (!unvisited.empty())
 		{
 			// Check current vertex again (sometime later)
 			nexts.push(curr);
@@ -53,6 +53,8 @@ void generate_maze(int w, int h)
 			nexts.push(randomWall);
 		}
 	}
+
+	return *maze;
 }
 
 // Use DrawLines to connect vertices (an edge)

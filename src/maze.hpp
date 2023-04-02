@@ -1,3 +1,7 @@
+
+#ifndef MAZE_H_
+#define MAZE_H_
+
 #include <unordered_map>
 #include <unordered_set>
 #include <cstddef>
@@ -14,6 +18,11 @@ struct Pos
 	bool operator==(const Pos& other) const
 	{
 		return x == other.x && y == other.y;
+	}
+
+	bool operator!=(const Pos& other) const
+	{
+		return !(*this == other);
 	}
 
 	friend std::ostream& operator<<(std::ostream&, const Pos&);
@@ -41,7 +50,7 @@ private:
 	size_t row = 0, col = 0;
 	std::unordered_map<Pos, std::unordered_set<Pos>> maze;
 
-	bool validEdge(const Pos&) const;
+	bool is_valid_vertex(const Pos&) const;
 
 public:
 	Maze(size_t, size_t);
@@ -56,6 +65,9 @@ public:
 	bool is_vertex(const Pos&) const;
 	bool is_wall(const Pos&, const Pos&) const; 
 
-	size_t vertices_len() const { return maze.size(); }
+	size_t maze_width() const { return col; }
+	size_t maze_height() const { return row; }
 	size_t num_of_neighbours(const Pos& vertex) const;
 };
+
+#endif

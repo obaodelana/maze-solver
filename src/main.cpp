@@ -7,26 +7,32 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
-
-#define OFFWHITE (Color) {247, 240, 240, 255}
+#include "solver.hpp"
 
 void get_endpoint(const Vector2&, Vector2&, Pos&);
 void display_options(const std::string&, int, int);
 
 constexpr int blockSize = 25;
+int width, height;
 
 int main(int argc, char **argv)
 {
+	constexpr int noOfAlgs = 3;
+	constexpr int alg_keys[] {KEY_ONE, KEY_TWO, KEY_THREE};
+
 	const int w = (argc > 1) ? std::atoi(argv[1]) : 40;
 	const int h = (argc > 2) ? std::atoi(argv[2]) : 30;
 
-	const int width = w * blockSize;
-	const int height = h * blockSize;
+	width = w * blockSize;
+	height = h * blockSize;
 
 	InitWindow(width, height, "Maze Solver");
 	SetTargetFPS(60);
 
-	generate_maze(w, h - 1);
+	const Maze maze = generate_maze(w, h - 1);
+	
+	int alg = -1;
+	float time = 0, stepTime = 1;
 
 	bool endPointsDropped[2] {false, false};
 	Vector2 endPoints[2] {};
@@ -36,27 +42,42 @@ int main(int argc, char **argv)
 	{
 		Vector2 mousePos = GetMousePosition();
 
-		if (IsMouseButtonPressed(0))
+		if (alg == -1)
 		{
-			endPointsDropped[0] = true;
-			get_endpoint(mousePos, endPoints[0], endPointsPos[0]);
-			if (endPointsPos[0].y >= h - 1)
+			for (int i = 0; i <= 1; i++)
 			{
-				endPointsPos[0].y--;
-				endPoints[0].y -= blockSize;
+				if (IsMouseButtonPressed(i))
+				{
+					endPointsDropped[i] = true;
+					get_endpoint(mousePos, endPoints[i], endPointsPos[i]);
+				}
 			}
-		}
 
-		else if (IsMouseButtonPressed(1))
-		{
-			endPointsDropped[1] = true;
-			get_endpoint(mousePos, endPoints[1], endPointsPos[1]);
-			if (endPointsPos[1].y >= h - 1)
+			for (int i = 0; i < noOfAlgs; i++)
 			{
-				endPointsPos[1].y--;
-				endPoints[1].y -= blockSize;
+				if (IsKeyPressed(alg_keys[i]))
+				{
+					time = 0;
+					alg = i;
+					break;
+				}
 			}
 		}
+	
+		else
+		{
+			time += GetFrameTime();
+			if (time >= stepTime)
+			{
+				time = 0;
+				bool done = find_path(maze, endPointsPos[0], endPointsPos[1], alg);
+				if (done)
+				{
+					alg = -1;
+					endPointsDropped[0] = false, endPointsDropped[1] = false;
+				}
+			} 
+		}	
 
 		BeginDrawing();
 
@@ -64,16 +85,27 @@ int main(int argc, char **argv)
 
 			draw_maze(w, h - 1, blockSize);
 
-			if (!endPointsDropped[0] || !endPointsDropped[1])
-				DrawCircle(mousePos.x - 0.1f, mousePos.y + 0.1f, blockSize / 3, OFFWHITE);
 			if (endPointsDropped[0])
 				DrawCircleV(endPoints[0], blockSize / 3, GREEN);
 			if (endPointsDropped[1])
 				DrawCircleV(endPoints[1], blockSize / 3, GOLD);
 
-			if (endPointsDropped[0] && endPointsDropped[1])
-				display_options("Depth-First Search;Breadth-First Search;Dijkstra's Algorithm",
-					width / (3 + 1), height - 20);
+			if (alg == -1)
+			{
+				if (!endPointsDropped[0] || !endPointsDropped[1])
+				{
+					DrawText("Left click to place [start].", 5, height - 20, 15, RAYWHITE);
+					DrawText("Right click to place [end].", width - 185, height - 20, 15, RAYWHITE);
+				}
+				if (endPointsDropped[0] && endPointsDropped[1])
+					display_options("Depth-First Search;Breadth-First Search;Dijkstra's Algorithm",
+						width / (3 + 1), height - 20);
+			}
+
+			else
+			{
+				draw_box(blockSize / 1.5);
+			}
 
 		EndDrawing();
 	}
@@ -92,6 +124,13 @@ void get_endpoint(const Vector2& mousePos, Vector2& endpoint, Pos& endpointPos)
 	
 	endpoint.x += (blockSize / 2);
 	endpoint.y += (blockSize / 2);
+
+	if (endpointPos.y >= height - 1)
+	{
+		endpointPos.y--;
+		endpoint.y -= blockSize;
+	}
+			
 }
 
 void display_options(const std::string& options, int w, int h)
@@ -104,7 +143,7 @@ void display_options(const std::string& options, int w, int h)
 		option = std::to_string(i++) + " " + option;
 
 		DrawRectangleLines(w - 3, h - 1, 12, 15, GRAY);
-		DrawText(option.c_str(), w, h, 15, OFFWHITE);
+		DrawText(option.c_str(), w, h, 15, RAYWHITE);
 		w += MeasureText(option.c_str(), 15) + 15;
 	}
 }

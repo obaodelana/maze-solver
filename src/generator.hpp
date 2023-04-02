@@ -1,4 +1,5 @@
+#include "maze.hpp"
 
-void generate_maze(int w, int h);
+const Maze& generate_maze(int w, int h);
 void draw_maze(int w, int h, int blockSize);
 void free_maze();
