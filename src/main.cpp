@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	const Maze maze = generate_maze(w, h - 1);
 	
 	int alg = -1; // index of algorithm running
-	int stepTime_ms = 200; // time to next animation
+	int stepTime_ms = 100; // time to next animation
 	float time = 0, timer = 0;
 
 	// User has dropped 0: start point; 1: end point
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 			// Show timer after user has dropped both waypoints
 			// Timer stays even after algorithm has completed for recording purposes
 			if (waypointsDropped[0] && waypointsDropped[1])
-				DrawText(TextFormat("%.2f", timer), 5, height- 20, 15, RAYWHITE);
+				DrawText(TextFormat("%.2fs", timer), 5, height- 20, 15, RAYWHITE);
 
 			// Show descriptive boxes and text
 			draw_box(blockSize);
