@@ -90,6 +90,7 @@ int main(int argc, char **argv)
 			float deltaTime = GetFrameTime();
 			// Adding up time since last frame gives the amount of time that has passed
 			timer += deltaTime, time += deltaTime;
+			// This is what gives the pause in visualization
 			if (time >= (stepTime_ms / 1000.0f))
 			{
 				time = 0;
