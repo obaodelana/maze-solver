@@ -106,20 +106,19 @@ int main(int argc, char **argv)
 					DrawText("Right click to place [end].", width - 185, height - 20, 15, RAYWHITE);
 				}
 				if (endPointsDropped[0] && endPointsDropped[1])
-					display_options("Depth-First Search;Breadth-First Search;Dijkstra's Algorithm",
+					display_options("Depth-First Search;Breadth-First Search;A* Algorithm",
 						width / (3 + 1), height - 20);
 			}
 
 			else
 			{
-				DrawText("Visited: Mint.  Unvisited: Grey.", 5, height - 20, 15, RAYWHITE);
 				DrawText(TextFormat("Step Time: %.1fs", stepTime), width - 110, height - 20, 15, RAYWHITE);
 			}
 
 			draw_box(blockSize);
 
 			if (endPointsDropped[0])
-				DrawCircleV(endPoints[0], blockSize / 3, GREEN);
+				DrawCircleV(endPoints[0], blockSize / 3, BLUE);
 			if (endPointsDropped[1])
 				DrawCircleV(endPoints[1], blockSize / 3, GOLD);
 

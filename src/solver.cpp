@@ -1,18 +1,30 @@
-#include "maze.hpp"
+#include "solver.hpp"
 #include "raylib.h"
 #include <unordered_set>
 #include <unordered_map>
 #include <list>
 #include <iostream>
+#include <queue> // prority_queue
 
 extern int width, height;
 
-bool dfs_bfs(bool dfs, const Maze&, Pos,
+enum Algorithm : int { DFS = 0, BFS, A_STAR };
+
+typedef std::pair<int, int> Cost_Dist;
+typedef std::pair<Pos, Cost_Dist> A_Pos;
+
+bool dfs_bfs(bool, const Maze&, Pos,
 	std::unordered_set<Pos>&, std::list<Pos>&,
 	std::unordered_map<Pos, Pos>&);
 
-void show_path(const Maze&, Pos, Pos,
-	const std::unordered_map<Pos, Pos>&);
+void show_path(const Maze&, Pos, Pos, const std::unordered_map<Pos, Pos>&);
+
+template <typename C>
+bool a_star(const Maze&, Pos,
+	std::unordered_set<Pos>&,
+	std::priority_queue<A_Pos, std::vector<A_Pos>, C>&,
+	std::unordered_map<Pos, Cost_Dist>&,
+	std::unordered_map<Pos, Pos>&);
 
 /*
 	Each search function performs only a step of the entire task.
@@ -22,24 +34,39 @@ void show_path(const Maze&, Pos, Pos,
 	This allows the search to be non-blocking
 */
 
-bool searching = false, path404 = false;
-std::unordered_map<Pos, Color> boxes {};
+static bool searching = false, path404 = false;
+static std::unordered_map<Pos, Color> boxes {};
 
-enum Algorithm : int { DFS = 0, BFS, DIJKSTRA };
+static Color MINT = (Color) {99, 163, 117, 255}; 
+
+static auto a_compare = [](const A_Pos& one, const A_Pos& two)
+{
+	int cost1 = one.second.first, cost2 = two.second.first;
+	return cost1 > cost2;
+};
 
 bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 {
 	static std::unordered_set<Pos> visited;
 	static std::list<Pos> container;
 	static std::unordered_map<Pos, Pos> searchTree;
+	// A* data structures
+	static std::priority_queue<A_Pos, std::vector<A_Pos>, decltype(a_compare)> a_container (a_compare);
+	static std::unordered_map<Pos, Cost_Dist> costs;
 
 	if (!searching)
 	{
 		searching = true;
-		path404 = false;
-		boxes.clear();
+		clear_boxes();
 
-		container.push_back(start);
+		if (alg != A_STAR)
+			container.push_back(start);
+		else
+		{
+			costs[start] = {start.distance(end), 0};
+			a_container.push({start, costs[start]});
+		}
+
 		searchTree[start] = start;
 	}
 
@@ -47,6 +74,10 @@ bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 	{
 		case DFS: case BFS:
 			searching = dfs_bfs(alg == DFS, maze, end, visited, container, searchTree);
+			break;
+
+		case A_STAR:
+		 	searching = a_star(maze, end, visited, a_container, costs, searchTree);
 			break;
 		
 		deault:
@@ -59,9 +90,16 @@ bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 	if (!searching)
 	{
 		visited.clear();
-		container.clear();
 		boxes.clear();
-		
+		if (alg != A_STAR)
+			container.clear();
+		else
+		{
+			while (!a_container.empty())
+				a_container.pop();
+			costs.clear();
+		}
+
 		show_path(maze, start, end, searchTree);
 		searchTree.clear();
 	}
@@ -70,7 +108,8 @@ bool find_path(const Maze& maze, Pos start, Pos end, int alg)
 }
 
 bool dfs_bfs(bool dfs, const Maze& maze, Pos goal,
-	std::unordered_set<Pos>& visited, std::list<Pos>& container,
+	std::unordered_set<Pos>& visited,
+	std::list<Pos>& container,
 	std::unordered_map<Pos, Pos>& searchTree)
 {
 	if (container.empty())
@@ -89,7 +128,7 @@ bool dfs_bfs(bool dfs, const Maze& maze, Pos goal,
 		visited.insert(curr);
 
 	// Mint
-	boxes[curr] = (Color) {99, 163, 117, 255};
+	boxes[curr] = MINT;
 	// Go through neighbours that are not walls
 	for (Pos next : maze.paths(curr))
 	{
@@ -107,6 +146,50 @@ bool dfs_bfs(bool dfs, const Maze& maze, Pos goal,
 		}
 	}
 	
+	return true;
+}
+
+template <typename C>
+bool a_star(const Maze& maze, Pos goal,
+	std::unordered_set<Pos>& visited,
+	std::priority_queue<A_Pos, std::vector<A_Pos>, C>& container,
+	std::unordered_map<Pos, Cost_Dist>& costs,
+	std::unordered_map<Pos, Pos>& searchTree)
+{
+	if (container.empty())
+		return false;
+
+	A_Pos curr = container.top();
+	container.pop();
+
+	Pos currPos = curr.first;
+	int distFromStart = curr.second.second;
+
+	visited.insert(currPos);
+
+	if (currPos == goal)
+		return false;
+
+	boxes[currPos] = MINT;
+	for (Pos next : maze.paths(currPos))
+	{
+		if (visited.find(next) != visited.end())
+			continue;
+
+		int g = distFromStart + 1;
+		bool inContainter = (costs.find(next) != costs.end());
+		if (!inContainter
+			|| (inContainter && g < costs[next].second))
+		{
+			costs[next] = {next.distance(goal) + g, g};
+			container.push({next, costs[next]});
+
+			searchTree[next] = currPos;
+
+			boxes[next] = LIGHTGRAY;
+		}
+	}
+
 	return true;
 }
 

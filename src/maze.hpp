@@ -8,6 +8,7 @@
 #include <vector>
 #include "raylib.h"
 #include <ostream>
+#include <cmath>
 
 struct Pos
 {
@@ -23,6 +24,11 @@ struct Pos
 	bool operator!=(const Pos& other) const
 	{
 		return !(*this == other);
+	}
+
+	int distance(const Pos& other) const
+	{
+		return std::powf(x - other.x, 2) + std::powf(y - other.y, 2);
 	}
 
 	friend std::ostream& operator<<(std::ostream&, const Pos&);
