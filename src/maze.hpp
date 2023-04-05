@@ -10,36 +10,34 @@
 #include <ostream>
 #include <cmath>
 
+// Node / vertex of undirected graph
 struct Pos
 {
 	int x, y;
 	Pos() : x(0), y(0) {}
 	Pos(int x, int y): x(x), y(y) {}
 
+	// Equal to
 	bool operator==(const Pos& other) const
-	{
-		return x == other.x && y == other.y;
-	}
-
+		{ return x == other.x && y == other.y; }
+	// Not equal to
 	bool operator!=(const Pos& other) const
-	{
-		return !(*this == other);
-	}
-
+		{ return !(*this == other); }
+	// Manhattan distance between two nodes
 	int distance(const Pos& other) const
-	{
-		return std::powf(x - other.x, 2) + std::powf(y - other.y, 2);
-	}
+		{ return std::abs(x - other.x) + std::abs(y - other.y); }
 
+	// Define sending to output stream
 	friend std::ostream& operator<<(std::ostream&, const Pos&);
 };
 
 namespace std
 {
 	template <>
-	// Define custom hashing function for Pos struct so can be a key in a map or set
+	// Define custom hashing function for [Pos] struct, so it can be used as a key
 	struct hash<Pos>
 	{
+		// Hash function for [Pos] is the EXOR of the its two values (not the best)
 		size_t operator() (const Pos& pos) const
 		{
 			using std::size_t;
@@ -54,18 +52,19 @@ class Maze
 {
 private:
 	size_t row = 0, col = 0;
+	// Graph as adjacency list
 	std::unordered_map<Pos, std::unordered_set<Pos>> maze;
 
-	bool is_valid_vertex(const Pos&) const;
-
 public:
+	// Default constructor
 	Maze(size_t, size_t);
 
-	// Remove edge connecting two vertices
+	// Remove edge connecting two vertices (both ways)
 	bool remove_wall(const Pos&, const Pos&);
 	
+	// Return list of neighbours
 	std::vector<Pos> walls(const Pos&) const;
-	// Return neighbours that are not wall
+	// Return neighbouring vertices that are not blocked off by walls
 	std::vector<Pos> paths(const Pos&) const;
 
 	bool is_vertex(const Pos&) const;
