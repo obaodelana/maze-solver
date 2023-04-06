@@ -5,6 +5,7 @@ TARGET = out/maze-solver
 # $@ is the target name
 # Compile
 out/%.o: src/%.cpp
+	@mkdir -p out
 	g++ -c $< $(shell pkg-config --cflags raylib) -o $@ -std=c++11
 
 # Link
