@@ -1,6 +1,6 @@
 # Maze Generator and Solver made with Raylib
 
-![A* Pathfinding](img/A*%202.gif)*A* Pathfinding*
+![A* Pathfinding](img/A*%202.gif)<em>A* Pathfinding</em>
 
 In class, we studied elementary graph theory and some basic graph algorithms. This was my first introduction to graphs. We looked at different types of graphs (directed & undirected), basic terminologies (path, cycle, DAGs etc) and search algorithms (BFS, DFS and Dijkstra's).
 
