@@ -50,8 +50,8 @@ Unlike DFS and BFS that have no clue where the goal is (they only what it is), A
 - If it is the goal, return the path taken
 - Adds it to the explored list
 - Looks at its neighbours
-	- If the neighbour has not been explored, it adds it along with $g(x`)$ and $f(x`)$ to the container.  $g(x`)$ is computed by adding 1 to the current vertex's $g(x)$ (since the distance from the start to its neighbour is 1)
-	- Else, it checks if the `distance from the start` $g(x) + 1$ is shorter through this vertex than the neighbouring vertex's original $g(x`)$
+	- If the neighbour has not been explored, it adds it along with $g(x')$ and $f(x')$ to the container.  $g(x')$ is computed by adding 1 to the current vertex's $g(x)$ (since the distance from the start to its neighbour is 1)
+	- Else, it checks if the `distance from the start` $g(x) + 1$ is shorter through this vertex than the neighbouring vertex's original $g(x')$
 		- If it is, it adds it to the container with the updated values
 		- Else, it skips the neighbour 
 	(the path to get to a certain vertex is always stored)
