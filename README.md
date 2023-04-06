@@ -20,10 +20,10 @@ This two algorithms are very similar, in fact, they only differ by one line of c
 ```c++
 // Stack
 if (dfs)
-	container.push_front(next);
+    container.push_front(next);
 // Queue
 else
-	container.push_back(next);
+    container.push_back(next);
 ```
 The algorithms traverses (i.e., moves along) the graph while looking for the goal.
 - Pick the first vertex in a container (DFS uses a stack, BFS uses a queue)
