@@ -1,12 +1,12 @@
 # Maze Generator and Solver made with Raylib
 
-![A* Pathfinding](img/A*%202.gif)
+![A* Pathfinding](img/A*%202.gif)*A* Pathfinding*
 
 In class, we studied elementary graph theory and some basic graph algorithms. This was my first introduction to graphs. We looked at different types of graphs (directed & undirected), basic terminologies (path, cycle, DAGs etc) and search algorithms (BFS, DFS and Dijkstra's).
 
 In an attempt to really solidify the concepts, as I think this is a super important topic in CS, I chose to build this little app.
 
-![Depth First Search](img/DFS%202.gif)
+![Depth First Search](img/DFS%202.gif)*DFS*
 
 - The maze is represented as an undirected graph where each wall is an edge drawn from two neighbouring vertices.
 - The maze-like pattern is randomly generated using a [randomized Depth-First Search](https://www.wikiwand.com/en/Maze_generation_algorithm#Randomized_depth-first_search) (see generator.cpp:27 for the implementation).
