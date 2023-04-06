@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 
 				// When the user has dropped both waypoints, display algorithm choices
 				if (waypointsDropped[0] && waypointsDropped[1])
-					display_options("Depth-First Search;Breadth-First Search;A* Algorithm",
+					display_options("Depth-First Search;Breadth-First Search;A* Pathfinding",
 						width / (3 + 1), height - 20);
 			}
 
