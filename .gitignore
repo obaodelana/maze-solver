@@ -1,3 +1,4 @@
 maze-solver
 .vscode/
 out/
+.DS_Store
