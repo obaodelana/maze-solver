@@ -1,4 +1,5 @@
 # Maze Generator and Solver made with Raylib
+[Try it out!](https://obaodelana.github.io/maze-solver/web/maze-solver.html)
 
 ![A* Pathfinding](img/A*%202.gif)<em>A* Pathfinding</em>
 
@@ -62,7 +63,7 @@ Unlike DFS and BFS that have no clue where the goal is (they only what it is), A
 ## Test it out
 Download [Raylib](https://www.raylib.com/), then type `make` in this directory. That should create an executable in a folder called "out". To run it, type `./maze-solver`.  
 <strong>OR</strong>
-Click here [here](https://obaodelana.github.io/maze-solver/web/maze-solver.html)
+Click [here](https://obaodelana.github.io/maze-solver/web/maze-solver.html)
 
 - Use the left mouse button to place a start point
 - Use the right mouse button to place an end point
