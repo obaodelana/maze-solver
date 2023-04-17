@@ -47,8 +47,7 @@ static bool searching = false, path404 = false;
 static std::unordered_map<Pos, Color> boxes {};
 static std::unordered_map<Pos, Cost_Dist> a_star_texts {};
 
-static Color MINT = (Color) {99, 163, 117, 255},
-	TEXT_COLOR = (Color) {125, 97, 103, 255}; 
+static Color MINT = (Color) {99, 163, 117, 255};
 
 // Comparator for priority queue,
 // which returns true when the first guy has a higher cost than the second

@@ -60,7 +60,7 @@ Unlike DFS and BFS that have no clue where the goal is (they only what it is), A
 ![A*](img/A*.gif)
 
 ## Test it out
-Download [Raylib](https://www.raylib.com/), then type `make` in this directory. That should create an executable in a folder called "out". To run it, type `./out/maze-solver`.
+Download [Raylib](https://www.raylib.com/), then type `make` in this directory. That should create an executable in a folder called "out". To run it, type `./maze-solver`.
 - Use the left mouse button to place a start point
 - Use the right mouse button to place an end point
 - Press 1, 2 or 3 to start an algorithm

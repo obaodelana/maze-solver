@@ -53,11 +53,14 @@ class Maze
 private:
 	size_t row = 0, col = 0;
 	// Graph as adjacency list
-	std::unordered_map<Pos, std::unordered_set<Pos>> maze;
+	std::unordered_map<Pos, std::unordered_set<Pos>> maze {};
 
 public:
-	// Default constructor
+	Maze() = default;
 	Maze(size_t, size_t);
+
+	// Assignment operator
+	void operator=(const Maze&);
 
 	// Remove edge connecting two vertices (both ways)
 	bool remove_wall(const Pos&, const Pos&);

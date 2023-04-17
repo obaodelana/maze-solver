@@ -35,6 +35,21 @@ Maze::Maze(size_t col, size_t row) : col(col), row(row)
 	}
 }
 
+// Copy values appropriately
+void Maze::operator=(const Maze& other)
+{
+	col = other.col, row = other.row;
+	for (int i = 0; i <= row; i++)
+	{
+		for (int j = 0; j <= col; j++)
+		{
+			Pos p = {j, i};
+			if (other.is_vertex(p))
+				maze[p] = other.maze.at(p);
+		}
+	}
+}
+
 // Print out [Pos] nicely
 std::ostream& operator<<(std::ostream& out, const Pos& pos)
 {
