@@ -26,7 +26,7 @@ if (dfs)
 else
     container.push_back(next);
 ```
-The algorithms traverses (i.e., moves along) the graph while looking for the goal.
+The algorithms traverse (i.e., moves along) the graph while looking for the goal.
 - Pick the first vertex in a container (DFS uses a stack, BFS uses a queue)
 - If it is the goal vertex, return the path taken
 - Skip the vertex if it has been explored before, else
@@ -36,7 +36,7 @@ The algorithms traverses (i.e., moves along) the graph while looking for the goa
 	- Else, add the neighbour to the container and save the path taken to get to the vertex
 - Repeat above steps until the container is empty
 
-In essence, it just looks around until it finds what it is looking for. If it doesn't find the goal vertex, it will exist because the container would be empty.
+In essence, it just looks around until it finds what it is looking for. If it doesn't find the goal vertex, it will exit because the container would be empty.
 
 The key difference between BFS and DFS is BFS looks at its closest neighbours first (it goes wide), while DFS looks at the last added vertex, so it goes deeper before coming back after reaching a dead end.
 
