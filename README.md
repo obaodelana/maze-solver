@@ -61,7 +61,7 @@ Unlike DFS and BFS that have no clue where the goal is (they only know what it i
 ![A*](img/A*.gif)
 
 ## Test it out
-Download [Raylib](https://www.raylib.com/), then type `make` in this directory. That should create an executable in a folder called "out". To run it, type `./maze-solver`.  
+Download [Raylib](https://www.raylib.com/), then type `make` in this directory. To run it, type `./maze-solver`.  
 <strong>OR</strong>
 Click [here](https://obaodelana.github.io/maze-solver/web/maze-solver.html)
 
