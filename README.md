@@ -46,7 +46,7 @@ The key difference between BFS and DFS is BFS looks at its closest neighbours fi
 ### A* Pathfinding
 In class, we learnt DFS, BFS and [Dijkstra's algorithm](https://www.wikiwand.com/en/Dijkstra's_algorithm), however, Dijkstra's algorithm would be not better than BFS, since a maze is an unweighted graph. So instead, I implemented the cool-sounding algorithm: A*!
 
-Unlike DFS and BFS that have no clue where the goal is (they only what it is), A* is an informed algorithm. It has an added cost attribute that allows the algorithm to know which vertex to explore next. The cost $f(x)$ is the sum of $g(x)$ `distance from the start` and a heuristic $h(x)$ the` estimated cost to the goal`. With this two values, it can make intelligent decisions.
+Unlike DFS and BFS that have no clue where the goal is (they only know what it is), A* is an informed algorithm. It has an added cost attribute that allows the algorithm to know which vertex to explore next. The cost $f(x)$ is the sum of $g(x)$ `distance from the start` and a heuristic $h(x)$ the` estimated cost to the goal`. With this two values, it can make intelligent decisions.
 - Picks the vertex with the lowest cost $f(x)$ in the container (a priority queue)
 - If it is the goal, return the path taken
 - Adds it to the explored list
