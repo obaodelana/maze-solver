@@ -7,8 +7,6 @@ In class, we studied elementary graph theory and some basic graph algorithms. Th
 
 In an attempt to really solidify the concepts, as I think this is a super important topic in CS, I chose to build this little app.
 
-![Depth First Search](img/DFS%202.gif)*DFS*
-
 - The maze is represented as an undirected graph where each wall is an edge drawn from two neighbouring vertices.
 - The maze-like pattern is randomly generated using a [randomized Depth-First Search](https://www.wikiwand.com/en/Maze_generation_algorithm#Randomized_depth-first_search) (see generator.cpp:27 for the implementation).
 	> The algorithm starts at a given vertex, and randomly picks only a single neighbour that has not been looked at before. It then removes the edge connecting the vertex to its neighbour. Next, it adds the current vertex and the just removed neighbour to a stack to perform the above steps, until there is nothing left in the stack
@@ -40,9 +38,16 @@ In essence, it just looks around until it finds what it is looking for. If it do
 
 The key difference between BFS and DFS is BFS looks at its closest neighbours first (it goes wide), while DFS looks at the last added vertex, so it goes deeper before coming back after reaching a dead end.
 
-![BFS](img/BFS.gif)*BFS should always find the shortest path because closer vertices are traversed first* 
-![DFS](img/DFS.gif)*Here, DFS doesn't find the shortest path*
+<figure>
+	<img src="img/BFS.gif" alt="BFS" width="500">
+	<figcaption>BFS should always find the shortest path because closer vertices are traversed first</figcaption>
+</figure>
 
+<figure>
+	<img src="img/DFS.gif" alt="DFS" width="500">
+	<figcaption>Here, DFS doesn't find the shortest path</figcaption>
+</figure>
+	
 ### A* Pathfinding
 In class, we learnt DFS, BFS and [Dijkstra's algorithm](https://www.wikiwand.com/en/Dijkstra's_algorithm), however, Dijkstra's algorithm would be not better than BFS, since a maze is an unweighted graph. So instead, I implemented the cool-sounding algorithm: A*!
 
